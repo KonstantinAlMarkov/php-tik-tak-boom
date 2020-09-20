@@ -109,7 +109,7 @@ const tasks = `
             "answer6": { "result": false, "value":  "Передозировка сериалами"}
         }, 
         {
-            "question": "В каком виде спорта используется бита и мяч?",
+            "question": "В каком иде спорта используется бита и мяч?",
             "answer1": { "result": false, "value": "Гольф"},
             "answer2": { "result": true, "value": "Крикет"},
             "answer3": { "result": false, "value": "Американский футбол"},

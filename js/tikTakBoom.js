@@ -17,7 +17,6 @@ tikTakBoom = {
         this.countOfPlayers = playernum.value;
         this.unparsedTasks = undefined;
         this.tasks = undefined;
-        this.superQuestionType = -1;
 
         this.timerField = timerField;
         this.gameStatusField = gameStatusField;
@@ -124,18 +123,18 @@ tikTakBoom = {
                 //В каждом вопросе есть текст
                 if (quest.question.length === 0) { throw new Error(`Отсутствует тест вопроса в вопросе №${i}!`); }
                 //во всех ответах заполнены данные
-                if(typeof(qAnswer1.result) !== `boolean`){ throw new Error(`Верность ответа ответа №1 в вопросе №${i} не bool!`);}
-                if(typeof(qAnswer2.result) !== `boolean`){ throw new Error(`Верность ответа ответа №2 в вопросе №${i} не bool!`);}
-                if(typeof(qAnswer3.result) !== `boolean`){ throw new Error(`Верность ответа ответа №3 в вопросе №${i} не bool!`);}
-                if(typeof(qAnswer4.result) !== `boolean`){ throw new Error(`Верность ответа ответа №4 в вопросе №${i} не bool!`);}
-                if(typeof(qAnswer5.result) !== `boolean`){ throw new Error(`Верность ответа ответа №5 в вопросе №${i} не bool!`);}
-                if(typeof(qAnswer6.result) !== `boolean`){ throw new Error(`Верность ответа ответа №6 в вопросе №${i} не bool!`);}
-                if(qAnswer1.value.length===0){ throw new Error(`Отсутствует результат ответа №1 в вопросе №${i}!`);}                 
-                if(qAnswer2.value.length===0){ throw new Error(`Отсутствует результат ответа №2 в вопросе №${i}!`);}
-                if(qAnswer3.value.length===0){ throw new Error(`Отсутствует результат ответа №3 в вопросе №${i}!`);}
-                if(qAnswer4.value.length===0){ throw new Error(`Отсутствует результат ответа №4 в вопросе №${i}!`);}
-                if(qAnswer5.value.length===0){ throw new Error(`Отсутствует результат ответа №5 в вопросе №${i}!`);}
-                if(qAnswer6.value.length===0){ throw new Error(`Отсутствует результат ответа №6 в вопросе №${i}!`);}
+                if (typeof (qAnswer1.result) !== `boolean`) { throw new Error(`Верность ответа ответа №1 в вопросе №${i} не bool!`); }
+                if (typeof (qAnswer2.result) !== `boolean`) { throw new Error(`Верность ответа ответа №2 в вопросе №${i} не bool!`); }
+                if (typeof (qAnswer3.result) !== `boolean`) { throw new Error(`Верность ответа ответа №3 в вопросе №${i} не bool!`); }
+                if (typeof (qAnswer4.result) !== `boolean`) { throw new Error(`Верность ответа ответа №4 в вопросе №${i} не bool!`); }
+                if (typeof (qAnswer5.result) !== `boolean`) { throw new Error(`Верность ответа ответа №5 в вопросе №${i} не bool!`); }
+                if (typeof (qAnswer6.result) !== `boolean`) { throw new Error(`Верность ответа ответа №6 в вопросе №${i} не bool!`); }
+                if (qAnswer1.value.length === 0) { throw new Error(`Отсутствует результат ответа №1 в вопросе №${i}!`); }
+                if (qAnswer2.value.length === 0) { throw new Error(`Отсутствует результат ответа №2 в вопросе №${i}!`); }
+                if (qAnswer3.value.length === 0) { throw new Error(`Отсутствует результат ответа №2 в вопросе №${i}!`); }
+                if (qAnswer4.value.length === 0) { throw new Error(`Отсутствует результат ответа №2 в вопросе №${i}!`); }
+                if (qAnswer5.value.length === 0) { throw new Error(`Отсутствует результат ответа №2 в вопросе №${i}!`); }
+                if (qAnswer6.value.length === 0) { throw new Error(`Отсутствует результат ответа №2 в вопросе №${i}!`); }
                 //нет вопроса с двумя правильными и неправильными ответами
                 if (qAnswer1.result === qAnswer2.result) { throw new Error(`Ответы совпадают в вопросе №${i}!`); }
                 let qAnsw = [qAnswer1.result, qAnswer2.result, qAnswer3.result, qAnswer4.result, qAnswer5.result, qAnswer6.result];
@@ -220,21 +219,6 @@ tikTakBoom = {
         this.gameStatusField.innerText += ` Вопрос игроку №${player.name}`;
 
         const taskNumber = randomIntNumber(this.tasks.length - 1);
-
-        const superQuestion = randomIntNumber(this.tasks.length - 1);
-
-        if (taskNumber === superQuestion)
-        {
-            superQuestionType = randomIntNumber();
-
-           if (superQuestionType === questionOneMillion) {
-                this.gameStatusField.innerText +=  ' Это вопрос на миллион'
-            }
-            else {
-                this.gameStatusField.innerText +=  ' Это вопрос восьмерка'
-            }
-        }
-
         this.printQuestion(this.tasks[taskNumber]);
 
         this.tasks.splice(taskNumber, 1);
@@ -245,24 +229,13 @@ tikTakBoom = {
     turnOff(value) {
         if (value) {
             this.gameStatusField.innerText = 'Верно!';
-            
-            // user answered correct on OneMillionQuestion we should finish game (result-"won")
-            if (this.superQuestionType === questionOneMillion) {
-                //this.rightAnswers = this.needRightAnswers;
-                players[this.currentPlayerNumber].score = this.needRightAnswers;
-            }
             //this.rightAnswers += 1;
             players[this.currentPlayerNumber].score++;
         } else {
             this.gameStatusField.innerText = 'Неверно!';
             players[this.currentPlayerNumber].score--;
         }
-
-        // user answered on question eight but he has not enough right answers
-        if (this.superQuestionType === questionEight && players[this.currentPlayerNumber].score < this.needRightAnswers) {
-            this.finish('lose');
-        }
-        else if (players[this.currentPlayerNumber].score < this.needRightAnswers) {
+        if (this.rightAnswers < this.needRightAnswers) {
             if (this.tasks.length === 0) {
                 this.finish('lose');
             } else {
