@@ -64,3 +64,17 @@ function getAnswers(task) {
     return result;
 }
 
+function createPlayers(count, errorsAllow,playTime) {
+    var pl = [];
+    for (var i = 0; i < count; i++) {
+        var player = {
+            name: `Игрок ${i}`,
+            remainErrors: errorsAllow,
+            score: 0,
+            timeRemain: playTime
+        };
+        pl.push(player)
+    }
+    return pl;
+}
+

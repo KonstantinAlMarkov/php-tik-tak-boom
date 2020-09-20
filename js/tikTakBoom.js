@@ -17,6 +17,7 @@ tikTakBoom = {
         this.countOfPlayers = playernum.value;
         this.unparsedTasks = undefined;
         this.tasks = undefined;
+        this.players = undefined;
         this.superQuestionType = -1;
 
         this.timerField = timerField;
@@ -39,7 +40,6 @@ tikTakBoom = {
         try {
             //Попытка чтения файла
             this.tasks = JSON.parse(tasks);  
-            this.unparsedTasks = tasks;
             //вопросов > 30
             if (this.tasks.length < 29) {
                 throw new Error('Недостаточно вопросов!');
@@ -182,7 +182,7 @@ tikTakBoom = {
 
     run() {
         if (this.readJSON()) {
-            this.hideGameControls();
+            this.hideGameControls();   
             this.startGameDiv.addEventListener('click', startGame = () => this.startTimer());
         }
         else {
@@ -195,7 +195,7 @@ tikTakBoom = {
     startTimer() {
         let timeToPlay = 3;
         this.timerField.innerText = `3`;
-        this.gameStatusField.innerText = `Игра начнётся через`;
+        (this.countOfPlayers===1)?this.gameStatusField.innerText = `Ход игрока №:this.gameStatusField.innerText = `${this.state}` начнётся через`;
         let self = this;
         const startTimer = setInterval(function () { timeToPlay--; this.timerField.innerText = `${timeToPlay}`; }, 1000);
         setTimeout(function () { clearInterval(startTimer); self.startQueeze(); }, 3000);
@@ -204,6 +204,7 @@ tikTakBoom = {
     },
 
     startQueeze() {
+        this.players = createPlayers(numberOfPlayers, errorsAllow);
         this.initPlayers(this.countOfPlayers);
         this.currentPlayerNumber = 0;
         this.rightAnswers = 0;
@@ -217,7 +218,7 @@ tikTakBoom = {
 
     turnOn() {
         var player = this.getNextPlayer();
-        this.gameStatusField.innerText += ` Вопрос игроку №${player.name}`;
+        this.gameStatusField.innerText += ` Вопрос игроку №${this.status}`;
 
         const taskNumber = randomIntNumber(this.tasks.length - 1);
 
@@ -239,7 +240,7 @@ tikTakBoom = {
 
         this.tasks.splice(taskNumber, 1);
 
-        this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
+     //   this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
     },
 
     turnOff(value) {
@@ -373,7 +374,7 @@ tikTakBoom = {
         }
     },
 
-    initPlayers(count) {
+ /*   initPlayers(count) {
         for (var i = 1; i <= count; i++) {
             var player = {
                 name: `Игрок ${i}`,
@@ -394,4 +395,4 @@ tikTakBoom = {
     }
 };
 
-players = [];
+players = []; */
