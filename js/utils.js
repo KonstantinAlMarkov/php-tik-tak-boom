@@ -64,17 +64,22 @@ function getAnswers(task) {
     return result;
 }
 
-function createPlayers(count, errorsAllow,playTime) {
+function createPlayers(numberOfPlayers, playerTime) {
     var pl = [];
-    for (var i = 0; i < count; i++) {
+    for (var i = 0; i < numberOfPlayers; i++) {
         var player = {
-            name: `Игрок ${i}`,
-            remainErrors: errorsAllow,
+            name: `Игрок ${i+1}`,
             score: 0,
-            timeRemain: playTime
+            timer: playerTime,
+            errors: 0,
+
+            addTime(timeValue=0) {
+                player.timer += timeValue;
+            }
+    
         };
+
         pl.push(player)
     }
     return pl;
 }
-

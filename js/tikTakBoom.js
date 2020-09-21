@@ -18,7 +18,9 @@ tikTakBoom = {
         this.unparsedTasks = undefined;
         this.tasks = undefined;
         this.players = undefined;
+        this.currentPlayer = undefined;
         this.superQuestionType = -1;
+        this.state = undefined;
 
         this.timerField = timerField;
         this.gameStatusField = gameStatusField;
@@ -32,7 +34,8 @@ tikTakBoom = {
         this.endGameDiv = endGamediv;
         this.playerNum = playernum;
 
-        this.needRightAnswers = 3;
+        this.needRightAnswers = 1;
+        this.needBadAnswers = 1;
     },
 
     //Чтение и проверка JSON
@@ -183,7 +186,7 @@ tikTakBoom = {
     run() {
         if (this.readJSON()) {
             this.hideGameControls();   
-            this.startGameDiv.addEventListener('click', startGame = () => this.startTimer());
+            this.startGameDiv.addEventListener('click', startGame = () => this.startQueeze());
         }
         else {
             this.startGameDiv.style.display = "none";
@@ -193,32 +196,39 @@ tikTakBoom = {
 
     //Время подготовки игрока
     startTimer() {
+        console.log(`запустил startTimer`);
         let timeToPlay = 3;
         this.timerField.innerText = `3`;
-        (this.countOfPlayers===1)?this.gameStatusField.innerText = `Ход игрока №:this.gameStatusField.innerText = `${this.state}` начнётся через`;
+        //исправь
+        this.gameStatusField.innerText = `Ход игрока №${this.players[this.currentPlayer].name} начнётся через`;
         let self = this;
         const startTimer = setInterval(function () { timeToPlay--; this.timerField.innerText = `${timeToPlay}`; }, 1000);
-        setTimeout(function () { clearInterval(startTimer); self.startQueeze(); }, 3000);
+        setTimeout(function () { clearInterval(startTimer); self.turnOn(); }, 3000);
         this.startGameDiv.style.display = "none";
         this.playerNum.style.display = "none";
     },
 
-    startQueeze() {
-        this.players = createPlayers(numberOfPlayers, errorsAllow);
-        this.initPlayers(this.countOfPlayers);
-        this.currentPlayerNumber = 0;
-        this.rightAnswers = 0;
+
+    startQueeze(playerNumber=0) {
+        console.log(`запустил startQueeze`);
+        if(this.players===undefined){
+            this.players=createPlayers(this.playerNum.value, this.boomTimer);
+        }
+
+        //this.rightAnswers = 0;
+        this.currentPlayer = playerNumber;
         this.state = 1;
-        this.gameStatusField.innerText = `Игра идёт`;
-        this.showGameControls();
-        this.endGameDiv.addEventListener('click', endGame = () => this.finish(`lose`));
-        this.turnOn();
-        this.timer();
+        this.startTimer();
     },
 
     turnOn() {
-        var player = this.getNextPlayer();
-        this.gameStatusField.innerText += ` Вопрос игроку №${this.status}`;
+        console.log(`запустил turnOn`);
+        this.timer();
+        this.gameStatusField.innerText = `Игра идёт`;
+        this.showGameControls();
+        this.endGameDiv.addEventListener('click', endGame = () => this.finish(`lose`));
+
+        this.gameStatusField.innerText += ` Вопрос  ${this.players[this.currentPlayer].name}`;
 
         const taskNumber = randomIntNumber(this.tasks.length - 1);
 
@@ -237,50 +247,65 @@ tikTakBoom = {
         }
 
         this.printQuestion(this.tasks[taskNumber]);
-
         this.tasks.splice(taskNumber, 1);
 
      //   this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
     },
 
     turnOff(value) {
-        if (value) {
-            this.gameStatusField.innerText = 'Верно!';
-            
-            // user answered correct on OneMillionQuestion we should finish game (result-"won")
-            if (this.superQuestionType === questionOneMillion) {
-                //this.rightAnswers = this.needRightAnswers;
-                players[this.currentPlayerNumber].score = this.needRightAnswers;
-            }
-            //this.rightAnswers += 1;
-            players[this.currentPlayerNumber].score++;
-        } else {
-            this.gameStatusField.innerText = 'Неверно!';
-            players[this.currentPlayerNumber].score--;
-        }
-
-        // user answered on question eight but he has not enough right answers
-        if (this.superQuestionType === questionEight && players[this.currentPlayerNumber].score < this.needRightAnswers) {
-            this.finish('lose');
-        }
-        else if (players[this.currentPlayerNumber].score < this.needRightAnswers) {
-            if (this.tasks.length === 0) {
-                this.finish('lose');
-            } else {
-                this.turnOn();
-            }
-        } else {
-            this.finish('won');
-        }
-
+        console.log(`запустил turnoff`);
+        
         this.textFieldAnswer1.removeEventListener('click', Boolean);
         this.textFieldAnswer2.removeEventListener('click', Boolean);
         this.textFieldAnswer3.removeEventListener('click', Boolean);
         this.textFieldAnswer4.removeEventListener('click', Boolean);
         this.textFieldAnswer5.removeEventListener('click', Boolean);
+
+        //перерасчёт очков
+        if (value) {
+            this.gameStatusField.innerText = 'Верно!';
+            
+ /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
+            if (this.superQuestionType === questionOneMillion) {
+                //this.rightAnswers = this.needRightAnswers;
+                this.players[this.currentPlayer].score = this.needRightAnswers;
+            }
+            //this.rightAnswers += 1; */
+            this.players[this.currentPlayer].score++;
+        } else {
+            this.gameStatusField.innerText = 'Неверно!';
+            this.players[this.currentPlayer].errors++;
+        }
+
+  /*      // user answered on question eight but he has not enough right answers
+        if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
+            this.finish('lose');
+        }
+        else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
+
+        //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
+        if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+        {
+            if (this.tasks.length === 0)
+            {
+            this.finish('lose');
+            } 
+            else 
+            {
+                this.turnOn();
+            }
+        } 
+        //если превысили количество ошибок
+        else if(this.players[this.currentPlayer].errors >= this.needBadAnswers){
+            this.finish('lose');    
+        }
+        else {
+            this.finish('won');
+        }
     },
 
     printQuestion(task) {
+        console.log(`запустил printQuestion`);
         this.textFieldQuestion.innerText = task.question;
 
         const map = getAnswersMap(task);
@@ -333,35 +358,54 @@ tikTakBoom = {
     },
 
     finish(result = 'lose') {
+        console.log(`запустил finish`);
+
         this.state = 0;
-        this.currentPlayerNumber = 0;
+
         if (result === 'lose') {
-            this.gameStatusField.innerText = `Вы проиграли!`;
+            this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} проиграл!`;
         }
         if (result === 'won') {
-            this.gameStatusField.innerText = `Вы выиграли!`;
+            this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выиграл!`;
         }
 
-        this.boomTimer = 30;
         this.textFieldQuestion.innerText = ``;
         this.textFieldAnswer1.innerText = ``;
         this.textFieldAnswer2.innerText = ``;
         this.textFieldAnswer3.innerText = ``;
         this.textFieldAnswer4.innerText = ``;
         this.textFieldAnswer5.innerText = ``;
-        this.hideGameControls();
+
+
+        if (this.currentPlayer<this.players.length-1) 
+        {
+            this.currentPlayer++;
+            console.log(`переход хода игроку ${JSON.stringify(this.players[this.currentPlayer])}`);
+            setTimeout(
+                () => {
+                    this.timer()
+                },
+                1000,
+            );          
+            this.startQueeze(this.currentPlayer);
+        }
+        else
+        { 
+           this.players=undefined;
+           this.hideGameControls();
+        }
     },
 
     timer() {
         if (this.state){
-            this.boomTimer -= 1;
-            let sec = this.boomTimer % 60;
-            let min = (this.boomTimer - sec) / 60;
+            this.players[this.currentPlayer].addTime(-1);
+            let sec = this.players[this.currentPlayer].timer % 60;
+            let min = (parseInt(this.players[this.currentPlayer].timer)  - sec) / 60;
             sec = (sec >= 10) ? sec : '0' + sec;
             min = (min >= 10) ? min : '0' + min;
             this.timerField.innerText = `${min}:${sec}`;
-    
-            if (this.boomTimer > 0) {
+
+            if (this.players[this.currentPlayer].timer  > 0) {
                 setTimeout(
                     () => {
                         this.timer()
@@ -373,26 +417,4 @@ tikTakBoom = {
             }    
         }
     },
-
- /*   initPlayers(count) {
-        for (var i = 1; i <= count; i++) {
-            var player = {
-                name: `Игрок ${i}`,
-                remainErrors: 3,
-                remainSeconds: 30,
-                score: 0
-            };
-            players.push(player)
-        }
-    },
-    getNextPlayer() {
-        if (this.state < players.count - 1) {
-            this.state++;
-        } else {
-            this.state = 0;
-        }
-        return players[this.state];
-    }
 };
-
-players = []; */
