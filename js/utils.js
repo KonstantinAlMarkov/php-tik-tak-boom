@@ -74,9 +74,8 @@ function createPlayers(numberOfPlayers, playerTime) {
             errors: 0,
 
             addTime(timeValue=0) {
-                player.timer += timeValue;
-            }
-    
+                this.timer += timeValue;
+            },  
         };
 
         pl.push(player)

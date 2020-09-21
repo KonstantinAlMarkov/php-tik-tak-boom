@@ -194,36 +194,35 @@ tikTakBoom = {
         };
     },
 
+    startQueeze(playerNumber=0) {
+        console.log(`запустил startQueeze`);
+        //создаём массив игроков, если его не было
+        if(this.players===undefined){
+            this.players=createPlayers(this.playerNum.value, this.boomTimer);
+        }
+        console.log(`игроки: ${JSON.stringify(this.players)}`);
+        //this.rightAnswers = 0;
+        this.currentPlayer = playerNumber;
+        console.log(`играет: ${this.players[this.currentPlayer].name}`);
+        this.startTimer();
+    },
+
     //Время подготовки игрока
     startTimer() {
         console.log(`запустил startTimer`);
         let timeToPlay = 3;
         this.timerField.innerText = `3`;
         //исправь
-        this.gameStatusField.innerText = `Ход игрока №${this.players[this.currentPlayer].name} начнётся через`;
+        this.gameStatusField.innerText = `Ход ${this.players[this.currentPlayer].name} начнётся через`;
         let self = this;
         const startTimer = setInterval(function () { timeToPlay--; this.timerField.innerText = `${timeToPlay}`; }, 1000);
-        setTimeout(function () { clearInterval(startTimer); self.turnOn(); }, 3000);
+        setTimeout(function () {clearInterval(startTimer); self.state = 1; self.timer(); self.turnOn();}, 3000);
         this.startGameDiv.style.display = "none";
         this.playerNum.style.display = "none";
     },
 
-
-    startQueeze(playerNumber=0) {
-        console.log(`запустил startQueeze`);
-        if(this.players===undefined){
-            this.players=createPlayers(this.playerNum.value, this.boomTimer);
-        }
-
-        //this.rightAnswers = 0;
-        this.currentPlayer = playerNumber;
-        this.state = 1;
-        this.startTimer();
-    },
-
     turnOn() {
         console.log(`запустил turnOn`);
-        this.timer();
         this.gameStatusField.innerText = `Игра идёт`;
         this.showGameControls();
         this.endGameDiv.addEventListener('click', endGame = () => this.finish(`lose`));
@@ -234,7 +233,7 @@ tikTakBoom = {
 
         const superQuestion = randomIntNumber(this.tasks.length - 1);
 
-        if (taskNumber === superQuestion)
+  /*      if (taskNumber === superQuestion)
         {
             superQuestionType = randomIntNumber();
 
@@ -244,7 +243,7 @@ tikTakBoom = {
             else {
                 this.gameStatusField.innerText +=  ' Это вопрос восьмерка'
             }
-        }
+        } */
 
         this.printQuestion(this.tasks[taskNumber]);
         this.tasks.splice(taskNumber, 1);
@@ -253,54 +252,57 @@ tikTakBoom = {
     },
 
     turnOff(value) {
-        console.log(`запустил turnoff`);
-        
+        console.log(`пытаюсь запустить turnoff`);
         this.textFieldAnswer1.removeEventListener('click', Boolean);
         this.textFieldAnswer2.removeEventListener('click', Boolean);
         this.textFieldAnswer3.removeEventListener('click', Boolean);
         this.textFieldAnswer4.removeEventListener('click', Boolean);
         this.textFieldAnswer5.removeEventListener('click', Boolean);
 
-        //перерасчёт очков
-        if (value) {
-            this.gameStatusField.innerText = 'Верно!';
-            
- /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
-            if (this.superQuestionType === questionOneMillion) {
-                //this.rightAnswers = this.needRightAnswers;
-                this.players[this.currentPlayer].score = this.needRightAnswers;
-            }
-            //this.rightAnswers += 1; */
-            this.players[this.currentPlayer].score++;
-        } else {
-            this.gameStatusField.innerText = 'Неверно!';
-            this.players[this.currentPlayer].errors++;
-        }
-
-  /*      // user answered on question eight but he has not enough right answers
-        if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
-            this.finish('lose');
-        }
-        else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
-
-        //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
-        if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+        if(!(this.players===undefined))
         {
-            if (this.tasks.length === 0)
-            {
-            this.finish('lose');
-            } 
-            else 
-            {
-                this.turnOn();
+            console.log(`запустил turnoff`);
+            //перерасчёт очков
+            if (value) {
+                this.gameStatusField.innerText = 'Верно!';          
+    /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
+                if (this.superQuestionType === questionOneMillion) {
+                    //this.rightAnswers = this.needRightAnswers;
+                    this.players[this.currentPlayer].score = this.needRightAnswers;
+                }
+                //this.rightAnswers += 1; */
+                this.players[this.currentPlayer].score++;
+                this.players[this.currentPlayer].addTime(+5);
+            } else {
+                this.gameStatusField.innerText = 'Неверно!';
+                this.players[this.currentPlayer].errors++;
+                this.players[this.currentPlayer].addTime(-5);
             }
-        } 
-        //если превысили количество ошибок
-        else if(this.players[this.currentPlayer].errors >= this.needBadAnswers){
-            this.finish('lose');    
-        }
-        else {
-            this.finish('won');
+    /*      // user answered on question eight but he has not enough right answers
+            if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
+                this.finish('lose');
+            }
+            else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
+
+            //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
+            if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+            {
+                if (this.tasks.length === 0)
+                {
+                    this.finish('lose');
+                } 
+                else 
+                {
+                    this.turnOn();
+                }
+            } 
+            //если превысили количество ошибок
+            else if(this.players[this.currentPlayer].errors >= this.needBadAnswers){
+                this.finish('lose');    
+            }
+            else {
+                this.finish('won');
+            }
         }
     },
 
@@ -312,11 +314,13 @@ tikTakBoom = {
         const answers = getAnswers(task);
         const answersCount = answers.length;
 
+        console.log(map);
+
         this.textFieldAnswer1.innerText = answers[0];
         this.textFieldAnswer2.innerText = answers[1];
 
-        this.textFieldAnswer1.addEventListener('click', answer1 = () => this.turnOff(map.get(answers[0])));
-        this.textFieldAnswer2.addEventListener('click', answer2 = () => this.turnOff(map.get(answers[1])));
+        this.textFieldAnswer1.addEventListener('click', answer1 = () => this.turnOff(map.get(answers[0])),{once : true});
+        this.textFieldAnswer2.addEventListener('click', answer2 = () => this.turnOff(map.get(answers[1])),{once : true});
 
         switch (answersCount) {
             case 2:
@@ -326,7 +330,7 @@ tikTakBoom = {
                 break;
             case 3:
                 this.textFieldAnswer3.innerText = answers[2];
-                this.textFieldAnswer3.addEventListener('click', answer3 = () => this.turnOff(map.get(answers[2])));
+                this.textFieldAnswer3.addEventListener('click', answer3 = () => this.turnOff(map.get(answers[2])),{once : true});
                 this.textFieldAnswer3.style.display = "block";
                 this.textFieldAnswer4.style.display = "none";
                 this.textFieldAnswer5.style.display = "none";
@@ -334,8 +338,8 @@ tikTakBoom = {
             case 4:
                 this.textFieldAnswer3.innerText = answers[2];
                 this.textFieldAnswer4.innerText = answers[3];
-                this.textFieldAnswer3.addEventListener('click', answer3 = () => this.turnOff(map.get(answers[2])));
-                this.textFieldAnswer4.addEventListener('click', answer4 = () => this.turnOff(map.get(answers[3])));
+                this.textFieldAnswer3.addEventListener('click', answer3 = () => this.turnOff(map.get(answers[2])),{once : true});
+                this.textFieldAnswer4.addEventListener('click', answer4 = () => this.turnOff(map.get(answers[3])),{once : true});
                 this.textFieldAnswer3.style.display = "block";
                 this.textFieldAnswer4.style.display = "block";
                 this.textFieldAnswer5.style.display = "none";
@@ -344,9 +348,9 @@ tikTakBoom = {
                 this.textFieldAnswer3.innerText = answers[2];
                 this.textFieldAnswer4.innerText = answers[3];
                 this.textFieldAnswer5.innerText = answers[4];
-                this.textFieldAnswer3.addEventListener('click', answer3 = () => this.turnOff(map.get(answers[2])));
-                this.textFieldAnswer4.addEventListener('click', answer4 = () => this.turnOff(map.get(answers[3])));
-                this.textFieldAnswer5.addEventListener('click', answer5 = () => this.turnOff(map.get(answers[4])));
+                this.textFieldAnswer3.addEventListener('click', answer3 = () => this.turnOff(map.get(answers[2])),{once : true});
+                this.textFieldAnswer4.addEventListener('click', answer4 = () => this.turnOff(map.get(answers[3])),{once : true});
+                this.textFieldAnswer5.addEventListener('click', answer5 = () => this.turnOff(map.get(answers[4])),{once : true});
                 this.textFieldAnswer3.style.display = "block";
                 this.textFieldAnswer4.style.display = "block";
                 this.textFieldAnswer5.style.display = "block";
@@ -385,7 +389,7 @@ tikTakBoom = {
                 () => {
                     this.timer()
                 },
-                1000,
+                3000,
             );          
             this.startQueeze(this.currentPlayer);
         }
