@@ -72,10 +72,20 @@ function createPlayers(numberOfPlayers, playerTime) {
             score: 0,
             timer: playerTime,
             errors: 0,
+            //0 - проиграл, 1 - выиграл, 2 - 
+            state: 0,
 
+            setTime(timeToSet) {
+                this.timer = timeToSet;
+            },
+            
             addTime(timeValue=0) {
                 this.timer += timeValue;
             },  
+
+            setState(stateValue) {
+                this.state = stateValue;
+            }
         };
 
         pl.push(player)
