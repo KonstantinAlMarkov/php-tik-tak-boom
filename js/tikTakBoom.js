@@ -34,12 +34,13 @@ tikTakBoom = {
         this.endGameDiv = endGamediv;
         this.playerNum = playernum;
 
-        this.needRightAnswers = 1;
-        this.needBadAnswers = 1;
+        this.needRightAnswers = 3;
+        this.needBadAnswers = 3;
 
         this.playerTimer = undefined;
         // 0 - обычая игра, 1 - супер-игра
         this.gameType = 0;
+        this.turnedOff = false;
     },
 
     //Чтение и проверка JSON
@@ -200,6 +201,7 @@ tikTakBoom = {
 
     startQueeze(playerNumber=0) {
         console.log(`запустил startQueeze`);
+
         //создаём массив игроков, если его не было
         if(this.players===undefined){
             this.players=createPlayers(this.playerNum.value, this.boomTimer);
@@ -217,6 +219,7 @@ tikTakBoom = {
         //this.rightAnswers = 0;
         this.currentPlayer = playerNumber;
         console.log(`играет: ${this.players[this.currentPlayer].name}`);
+
         this.startTimer();
     },
 
@@ -241,6 +244,7 @@ tikTakBoom = {
         this.gameStatusField.innerText += `Вопрос ${this.players[this.currentPlayer].name}`;
         const taskNumber = randomIntNumber(this.tasks.length - 1);
         const superQuestion = randomIntNumber(this.tasks.length - 1);
+        this.turnedOff = false;
 
   /*    if (this.gameType===0){
             if (taskNumber === superQuestion)
@@ -262,7 +266,6 @@ tikTakBoom = {
     },
 
     turnOff(value) {
-        console.log(`пытаюсь запустить turnoff`);
         this.textFieldAnswer1.removeEventListener('click', Boolean);
         this.textFieldAnswer2.removeEventListener('click', Boolean);
         this.textFieldAnswer3.removeEventListener('click', Boolean);
@@ -270,53 +273,63 @@ tikTakBoom = {
         this.textFieldAnswer5.removeEventListener('click', Boolean);
         this.hideGameControls();
 
-        if(!(this.players===undefined))
+        if (!this.turnedOff)
         {
-            console.log(`запустил turnoff`);
-            //перерасчёт очков
-            if (value) {
-                this.gameStatusField.innerText = 'Верно!';          
-    /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
-                if (this.superQuestionType === questionOneMillion) {
-                    //this.rightAnswers = this.needRightAnswers;
-                    this.players[this.currentPlayer].score = this.needRightAnswers;
-                }
-                //this.rightAnswers += 1; */
-                this.players[this.currentPlayer].score++;
-                if (this.gameType===0) {
-                    this.players[this.currentPlayer].addTime(+5);
-                }
-            } else {
-                if (this.gameType===0) {
-                    this.gameStatusField.innerText = 'Неверно!';
-                    this.players[this.currentPlayer].errors++;
-                    this.players[this.currentPlayer].addTime(-5);                   
-                }
-            }
-    /*      // user answered on question eight but he has not enough right answers
-            if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
-                this.finish('lose');
-            }
-            else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
-
-            //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
-            if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+            this.turnedOff = true;
+            if(!(this.players===undefined))
             {
-                if (this.tasks.length === 0)
-                {
-                    this.finish('lose');
-                } 
-                else 
-                {
-                    this.turnOn();
+                console.log(`запустил turnoff`);
+                //перерасчёт очков
+                if (value) {
+                    this.gameStatusField.innerText = 'Верно!';          
+        /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
+                    if (this.superQuestionType === questionOneMillion) {
+                        //this.rightAnswers = this.needRightAnswers;
+                        this.players[this.currentPlayer].score = this.needRightAnswers;
+                    }
+                    //this.rightAnswers += 1; */
+                    this.players[this.currentPlayer].score++;
+                    if (this.gameType===0) {
+                        this.players[this.currentPlayer].addTime(+5);
+                    }
+                } else {
+                    if (this.gameType===0) {
+                        this.gameStatusField.innerText = 'Неверно!';
+                        this.players[this.currentPlayer].errors++;
+
+                        this.players[this.currentPlayer].addTime(-5);                   
+                    }
                 }
-            } 
-            //если превысили количество ошибок
-            else if(this.players[this.currentPlayer].errors >= this.needBadAnswers){
-                this.finish('lose');    
-            }
-            else {
-                this.finish('won');
+
+                console.log(`очков=${this.players[this.currentPlayer].score}`);
+                console.log(`ошибок=${this.players[this.currentPlayer].errors}`);
+        /*      // user answered on question eight but he has not enough right answers
+                if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
+                    this.finish('lose');
+                }
+                else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
+                //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
+                if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+                {
+                    if (this.tasks.length === 0)
+                    {
+                        if (this.players[this.currentPlayer].score > 0) {
+                            this.finish('won');                           
+                        }
+                        else {this.finish('lose');}
+                    } 
+                    else 
+                    {
+                        this.turnOn();
+                    }
+                } 
+                //если превысили количество ошибок
+                else if(this.players[this.currentPlayer].errors > this.needBadAnswers){
+                    this.finish('lose');    
+                }
+                else {
+                    this.finish('won');
+                }
             }
         }
     },
@@ -380,99 +393,124 @@ tikTakBoom = {
 
     finish(result = 'lose') {
         console.log(`запустил finish`);
+        clearInterval(this.playerTimer);
+        this.playerTimer = undefined;
 
         if (result == 'stop'){
             this.gameStatusField.innerText = `Игра окончена`;
-            clearInterval(this.playerTimer);
             this.players=undefined;
             this.hideGameControls();               
         } else {
-            if (result === 'lose') {
-                this.players.length>1 ? this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выбыл из игры`: this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} проиграл!`;
-                this.players[this.currentPlayer].setState(0);
-                clearInterval(this.playerTimer);
-            }
-            if (result === 'won') {
-                this.players.length>1 ? this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} ещё в игре`: this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выиграл!`;          
-                this.players[this.currentPlayer].setState(1);
-                clearInterval(this.playerTimer);
-            }
-    
-            this.textFieldQuestion.innerText = ``;
-            this.textFieldAnswer1.innerText = ``;
-            this.textFieldAnswer2.innerText = ``;
-            this.textFieldAnswer3.innerText = ``;
-            this.textFieldAnswer4.innerText = ``;
-            this.textFieldAnswer5.innerText = ``;
-    
-            //Если не все ещё сыграли
-            if (this.currentPlayer<this.players.length-1) 
-            {
-                this.currentPlayer++;
-                setTimeout(
-                    () => {
-                        this.gameStatusField.innerText = `Переход хода к: ${this.players[this.currentPlayer].name}`;
-                        this.startQueeze(this.currentPlayer);
-                    },
-                    3000,
-                );          
-            }
-            //Если игроков несколько, то смотрим 
-            else if(this.players.length > 1)
-            { 
-                let winners = [];
-                for (player of this.players)
-                {
-                    if (player.state===1)
-                    {
-                        winners.push(player);
+            if (this.tasks.length === 0){
+                if (result === 'lose') {
+                    let winner = undefined;
+                    for (player in players){
+                        if (player.score > 0) {winner=player;}
                     }
+                    if (winner === undefined){
+                        this.gameStatusField.innerText = `Все проиграли!`;  
+                    } else {
+                        this.gameStatusField.innerText = `${player.name} выиграл!`;    
+                    }
+                    this.players=undefined;
+                    this.boomTimer = 30;
+                    this.gameType = 0;
+                    this.needBadAnswers = 3;
+                    this.needRightAnswers = 3;
+                    this.hideGameControls();
                 }
-                //выбор с окончанием игры
-                if (winners.length > 1)
+                if (result === 'won') {
+                    this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выиграл!`;          
+                    this.players=undefined;
+                    this.boomTimer = 30;
+                    this.gameType = 0;
+                    this.needBadAnswers = 3;
+                    this.needRightAnswers = 3;
+                    this.hideGameControls();
+                }               
+            } 
+            else
+            {
+                if (result === 'lose') {
+                    this.players.length>1 ? this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выбыл из игры`: this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} проиграл!`;
+                    this.players[this.currentPlayer].setState(0);
+                }
+                if (result === 'won') {
+                    this.players.length>1 ? this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} ещё в игре`: this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выиграл!`;          
+                    this.players[this.currentPlayer].setState(1);
+                }    
+    
+                console.log(`очки ${this.players[this.currentPlayer].name}:правильно ${this.players[this.currentPlayer].score}:ошибок:${this.players[this.currentPlayer].errors}`)
+        
+                this.textFieldQuestion.innerText = ``;
+                this.textFieldAnswer1.innerText = ``;
+                this.textFieldAnswer2.innerText = ``;
+                this.textFieldAnswer3.innerText = ``;
+                this.textFieldAnswer4.innerText = ``;
+                this.textFieldAnswer5.innerText = ``;
+        
+                //Если не все ещё сыграли
+                if (this.currentPlayer<this.players.length-1) 
                 {
+                    this.currentPlayer++;
                     setTimeout(
                         () => {
                             this.gameStatusField.innerText = `Переход хода к: ${this.players[this.currentPlayer].name}`;
                             this.startQueeze(this.currentPlayer);
-                            this.gameStatusField.innerText = `Начало супер-игры!`;
-                            console.log(winners);
-                            this.players=winners;
-                            this.boomTimer = 5;
-                            this.gameType = 1;
-                            this.needBadAnswers = 1;
-                            this.needRightAnswers = 1;
-                            this.hideGameControls();
-                            this.startQueeze();   
                         },
                         3000,
-                    );              
-                } else if (winners.length === 1)
-                {
-                    this.gameStatusField.innerText = `Абсолютный победитель: ${winners[0].name}`;
-                    this.players=undefined;
-                    this.boomTimer = 30;
-                    this.gameType = 0;
-                    this.hideGameControls();               
-                } else 
-                {
-                    this.gameStatusField.innerText = `Проиграли все!`;
-                    this.players=undefined;
-                    this.boomTimer = 30;
-                    this.gameType = 0;
-                    this.needBadAnswers = 1; //исправь потом на 3
-                    this.needRightAnswers = 1; //исправь потом на 3
-                    this.hideGameControls();
+                    );          
                 }
-            }   
-            //Если игрок один, то конец игры
-            else
-            {
-               this.players=undefined;
-               this.hideGameControls();
+                //Если игроков несколько, то смотрим 
+                else if(this.players.length > 1)
+                { 
+                    let winners = [];
+                    for (player of this.players)
+                    {
+                        if (player.state===1)
+                        {
+                            winners.push(player);
+                        }
+                    }
+                    //выбор с окончанием игры
+                    if (winners.length > 1)
+                    {
+                                console.log("Начало супер-игры!");
+                                this.gameStatusField.innerText = `Начало супер-игры!`;
+                                console.log(winners);
+                                this.players=winners;
+                                this.boomTimer = 5;
+                                this.gameType = 1;
+                                this.needBadAnswers = 1;
+                                this.needRightAnswers = 1;
+                                this.hideGameControls();
+                                this.startQueeze(0);               
+                    } else if (winners.length === 1)
+                    {
+                        this.gameStatusField.innerText = `Абсолютный победитель: ${winners[0].name}`;
+                        this.players=undefined;
+                        this.boomTimer = 30;
+                        this.gameType = 0;
+                        this.hideGameControls();               
+                    } else 
+                    {
+                        this.gameStatusField.innerText = `Проиграли все!`;
+                        this.players=undefined;
+                        this.boomTimer = 30;
+                        this.gameType = 0;
+                        this.needBadAnswers = 3;
+                        this.needRightAnswers = 3;
+                        this.hideGameControls();
+                    }
+                }   
+                //Если игрок один, то конец игры
+                else
+                {
+                   this.players=undefined;
+                   this.hideGameControls();
+                }                
             }
         }
-
         //this.state = 0;
     },
     //таймер для отсчёта времени игрока
