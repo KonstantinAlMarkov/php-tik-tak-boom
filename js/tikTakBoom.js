@@ -173,8 +173,8 @@ tikTakBoom = {
         this.textFieldAnswer3.style.display = "none";
         this.textFieldAnswer4.style.display = "none";
         this.textFieldAnswer5.style.display = "none";
-        this.playerNum.style.display = "block";
-        this.startGameDiv.style.display = "block";
+        //this.playerNum.style.display = "block";
+        //this.startGameDiv.style.display = "block";
     },
 
     showGameControls() {
@@ -184,8 +184,8 @@ tikTakBoom = {
         this.textFieldAnswer3.style.display = "block";
         this.textFieldAnswer4.style.display = "block";
         this.textFieldAnswer5.style.display = "block";
-        //    this.playerNum.style.display = "none";  
-        //this.startGameDiv.style.display = "none";   
+        this.playerNum.style.display = "none";  
+        this.startGameDiv.style.display = "none";   
     },
 
     run() {
@@ -201,6 +201,9 @@ tikTakBoom = {
 
     startQueeze(playerNumber=0) {
         console.log(`запустил startQueeze`);
+
+        //инициализируем таймер времени игры
+        this.boomTimer = parseInt(document.getElementById('timePlay').value);
 
         //создаём массив игроков, если его не было
         if(this.players===undefined){
