@@ -173,8 +173,23 @@ tikTakBoom = {
         this.textFieldAnswer3.style.display = "none";
         this.textFieldAnswer4.style.display = "none";
         this.textFieldAnswer5.style.display = "none";
+       
+    },
+
+    showMenu() {
+        document.getElementById('playerNumtext').style.display = "block";
+        document.getElementById('playerTimeText').style.display = "block";
+        document.getElementById('playerInpTime').style.display = "block";
         this.playerNum.style.display = "block";
         this.startGameDiv.style.display = "block";
+    },
+
+    hideMenu() {
+        document.getElementById('playerNumtext').style.display = "none";
+        document.getElementById('playerTimeText').style.display = "none";
+        document.getElementById('playerInpTime').style.display = "none";
+        this.playerNum.style.display = "none";  
+        this.startGameDiv.style.display = "none"; 
     },
 
     showGameControls() {
@@ -183,9 +198,7 @@ tikTakBoom = {
         this.textFieldAnswer2.style.display = "block";
         this.textFieldAnswer3.style.display = "block";
         this.textFieldAnswer4.style.display = "block";
-        this.textFieldAnswer5.style.display = "block";
-        //this.playerNum.style.display = "none";  
-        //this.startGameDiv.style.display = "none";   
+        this.textFieldAnswer5.style.display = "block";       
     },
 
     run() {
@@ -201,6 +214,8 @@ tikTakBoom = {
 
     startQueeze(playerNumber=0) {
         console.log(`запустил startQueeze`);
+
+        this.hideMenu();
 
         //инициализируем таймер времени игры
         this.boomTimer = parseInt(document.getElementById('timePlay').value);
@@ -399,7 +414,8 @@ tikTakBoom = {
         if (result == 'stop'){
             this.gameStatusField.innerText = `Игра окончена`;
             this.players=undefined;
-            this.hideGameControls();               
+            this.hideGameControls();
+            this.showMenu();               
         } else {
             if (this.tasks.length === 0){
                 if (result === 'lose') {
@@ -418,6 +434,7 @@ tikTakBoom = {
                     this.needBadAnswers = 3;
                     this.needRightAnswers = 3;
                     this.hideGameControls();
+                    this.showMenu();  
                 }
                 if (result === 'won') {
                     this.gameStatusField.innerText = `${this.players[this.currentPlayer].name} выиграл!`;          
@@ -427,6 +444,7 @@ tikTakBoom = {
                     this.needBadAnswers = 3;
                     this.needRightAnswers = 3;
                     this.hideGameControls();
+                    this.showMenu();  
                 }               
             } 
             else
@@ -491,7 +509,8 @@ tikTakBoom = {
                         this.players=undefined;
                         this.boomTimer = 30;
                         this.gameType = 0;
-                        this.hideGameControls();               
+                        this.hideGameControls(); 
+                        this.showMenu();                
                     } else 
                     {
                         this.gameStatusField.innerText = `Проиграли все!`;
@@ -501,6 +520,7 @@ tikTakBoom = {
                         this.needBadAnswers = 3;
                         this.needRightAnswers = 3;
                         this.hideGameControls();
+                        this.showMenu();  
                     }
                 }   
                 //Если игрок один, то конец игры
@@ -508,6 +528,7 @@ tikTakBoom = {
                 {
                    this.players=undefined;
                    this.hideGameControls();
+                   this.showMenu();  
                 }                
             }
         }
