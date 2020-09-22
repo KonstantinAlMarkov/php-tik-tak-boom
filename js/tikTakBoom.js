@@ -249,23 +249,20 @@ tikTakBoom = {
         const superQuestion = randomIntNumber(this.tasks.length - 1);
         this.turnedOff = false;
 
-  /*    if (this.gameType===0){
-            if (taskNumber === superQuestion)
-            {
-                superQuestionType = randomIntNumber();
+        if (taskNumber === superQuestion) {
+            superQuestionType = randomIntNumber();
 
             if (superQuestionType === questionOneMillion) {
-                    this.gameStatusField.innerText +=  ' Это вопрос на миллион'
-                }
-                else {
-                    this.gameStatusField.innerText +=  ' Это вопрос восьмерка'
-                }
-            } 
-        }*/
+                this.gameStatusField.innerText +=  ' Это вопрос на миллион';
+            }
+            else {
+                this.gameStatusField.innerText +=  ' Это вопрос восьмерка';
+            }
+        }
         this.printQuestion(this.tasks[taskNumber]);
         this.tasks.splice(taskNumber, 1);
 
-     //   this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
+        //   this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
     },
 
     turnOff(value) {
@@ -285,7 +282,7 @@ tikTakBoom = {
                 //перерасчёт очков
                 if (value) {
                     this.gameStatusField.innerText = 'Верно!';          
-        /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
+                    // user answered correct on OneMillionQuestion we should finish game (result-"won")
                     if (this.superQuestionType === questionOneMillion) {
                         //this.rightAnswers = this.needRightAnswers;
                         this.players[this.currentPlayer].score = this.needRightAnswers;
@@ -311,7 +308,7 @@ tikTakBoom = {
                     this.finish('lose');
                 }
                 else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
-                //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
+                //если недостаточно очков и ошибок и опрос был не воьмерка - продолжаем игру (если ещё остались вопросы)
                 if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
                 {
                     if (this.tasks.length === 0)
