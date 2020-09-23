@@ -191,13 +191,14 @@ tikTakBoom = {
         this.timeToPlay.style.display = "block";
     },
 
-    hideMenu() {
+ /*   hideMenu() {
         document.getElementById('playerNumtext').style.display = "none";
         document.getElementById('playerTimeText').style.display = "none";
         document.getElementById('playerInpTime').style.display = "none";
         this.playerNum.style.display = "none";  
         this.startGameDiv.style.display = "none"; 
-    },
+    },*/
+
 
     showGameControls() {
         this.endGameDiv.style.display = "block";
@@ -227,16 +228,13 @@ tikTakBoom = {
 
     startQueeze(playerNumber=0) {
         console.log(`запустил startQueeze`);
+        //инициализируем таймер времени игры
         if (this.gameType===0)
         {
             this.boomTimer = parseInt(this.gameTime.value);
         }
 
-        this.hideMenu();
-
-        //инициализируем таймер времени игры
-        this.boomTimer = parseInt(document.getElementById('timePlay').value);
-
+//        this.hideMenu();
         //создаём массив игроков, если его не было
         if(this.players===undefined){
             this.players=createPlayers(this.playerNum.value, this.boomTimer);

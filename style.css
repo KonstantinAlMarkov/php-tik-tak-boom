@@ -32,8 +32,8 @@ span{
 
 .timer-output-wrapper{
     position: absolute;
-    margin-top: 135px;
-    margin-left: 220px;
+    margin-top: 100px;
+    margin-left: 140px;
     width:300px;
     display: flex;
     flex-direction: row;
