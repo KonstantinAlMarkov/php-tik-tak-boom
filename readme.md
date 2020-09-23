@@ -13,6 +13,13 @@
 * Не разрешается более одного правильного ответа в вопросе
 * Не Разрешается вопроса без ответа
 
+
+Над проектом работали:
+Константин Марков - тимлидер https://github.com/KonstantinAlMarkov/php-tik-tak-boom
+Александр Зуев https://github.com/Tereami/php-tik-tak-boom
+Анна Яковлева https://github.com/AnnaYakovl/php-tik-tak-boom
+
+
 ![как это работало изначально(почти изначально)](./img/skill-F13.png)
 
 #### Решенные задания

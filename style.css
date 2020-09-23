@@ -70,7 +70,16 @@ span{
     border: none;
 }
 
-#playerNum p {
+#playerNum  p {
     font-style: oblique;
     margin-bottom: 0px;
+}
+
+#playTime p {
+    font-style: oblique;
+    margin-bottom: 0px;
+}
+
+#playerInpTime input{
+    border: none;
 }

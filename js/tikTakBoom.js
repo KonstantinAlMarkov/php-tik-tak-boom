@@ -191,6 +191,14 @@ tikTakBoom = {
         this.timeToPlay.style.display = "block";
     },
 
+    hideMenu() {
+        document.getElementById('playerNumtext').style.display = "none";
+        document.getElementById('playerTimeText').style.display = "none";
+        document.getElementById('playerInpTime').style.display = "none";
+        this.playerNum.style.display = "none";  
+        this.startGameDiv.style.display = "none"; 
+    },
+
     showGameControls() {
         this.endGameDiv.style.display = "block";
         this.textFieldAnswer1.style.display = "block";
@@ -223,6 +231,11 @@ tikTakBoom = {
         {
             this.boomTimer = parseInt(this.gameTime.value);
         }
+
+        this.hideMenu();
+
+        //инициализируем таймер времени игры
+        this.boomTimer = parseInt(document.getElementById('timePlay').value);
 
         //создаём массив игроков, если его не было
         if(this.players===undefined){
@@ -266,23 +279,20 @@ tikTakBoom = {
         const superQuestion = randomIntNumber(this.tasks.length - 1);
         this.turnedOff = false;
 
-  /*    if (this.gameType===0){
-            if (taskNumber === superQuestion)
-            {
-                superQuestionType = randomIntNumber();
+        if (taskNumber === superQuestion) {
+            superQuestionType = randomIntNumber();
 
             if (superQuestionType === questionOneMillion) {
-                    this.gameStatusField.innerText +=  ' Это вопрос на миллион'
-                }
-                else {
-                    this.gameStatusField.innerText +=  ' Это вопрос восьмерка'
-                }
-            } 
-        }*/
+                this.gameStatusField.innerText +=  ' Это вопрос на миллион';
+            }
+            else {
+                this.gameStatusField.innerText +=  ' Это вопрос восьмерка';
+            }
+        }
         this.printQuestion(this.tasks[taskNumber]);
         this.tasks.splice(taskNumber, 1);
 
-     //   this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
+        //   this.state = (this.state === this.countOfPlayers) ? 1 : this.state + 1;
     },
 
     turnOff(value) {
@@ -303,7 +313,7 @@ tikTakBoom = {
                 //перерасчёт очков
                 if (value) {
                     this.gameStatusField.innerText = 'Верно!';          
-        /*           // user answered correct on OneMillionQuestion we should finish game (result-"won")
+                    // user answered correct on OneMillionQuestion we should finish game (result-"won")
                     if (this.superQuestionType === questionOneMillion) {
                         //this.rightAnswers = this.needRightAnswers;
                         this.players[this.currentPlayer].score = this.needRightAnswers;
@@ -321,16 +331,12 @@ tikTakBoom = {
                         this.players[this.currentPlayer].addTime(-5);                   
                     }
                 }
-        /*      // user answered on question eight but he has not enough right answers
-                if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
-                    this.finish('lose');
-                }
-                else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
-                //если недостаточно очков и ошибок - продолжаем игру (если ещё остались вопросы)
+
+                console.log(`очков=${this.players[this.currentPlayer].score}`);
+                console.log(`ошибок=${this.players[this.currentPlayer].errors}`);
                 
-                console.log(`был дан ответ ${value}; стало баллов=${this.players[this.currentPlayer].score};стало ошибок=${this.players[this.currentPlayer].errors}`)
-                
-                if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+                //если недостаточно очков и ошибок и вопрос был не восьмерка - продолжаем игру (если ещё остались вопросы)
+                if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers && this.superQuestionType != questionEight)
                 {
                     if (this.tasks.length === 0)
                     {
@@ -534,6 +540,7 @@ tikTakBoom = {
                 {
                    this.players=undefined;
                    this.hideGameControls();
+                   this.showMenu();  
                 }                
             }
         }
