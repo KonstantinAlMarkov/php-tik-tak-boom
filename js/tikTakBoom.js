@@ -318,13 +318,9 @@ tikTakBoom = {
 
                 console.log(`очков=${this.players[this.currentPlayer].score}`);
                 console.log(`ошибок=${this.players[this.currentPlayer].errors}`);
-        /*      // user answered on question eight but he has not enough right answers
-                if (this.superQuestionType === questionEight && this.players[this.currentPlayer].score < this.needRightAnswers) {
-                    this.finish('lose');
-                }
-                else if (this.players[this.currentPlayer].score < this.needRightAnswers) { */
-                //если недостаточно очков и ошибок и опрос был не воьмерка - продолжаем игру (если ещё остались вопросы)
-                if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers)
+                
+                //если недостаточно очков и ошибок и вопрос был не восьмерка - продолжаем игру (если ещё остались вопросы)
+                if (this.players[this.currentPlayer].score < this.needRightAnswers && this.players[this.currentPlayer].errors < this.needBadAnswers && this.superQuestionType != questionEight)
                 {
                     if (this.tasks.length === 0)
                     {
