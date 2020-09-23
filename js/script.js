@@ -12,7 +12,12 @@ window.onload = function()
         document.getElementById('answer5'),
         document.getElementById('startgamediv'),       
         document.getElementById('endgamediv'),
-        document.getElementById('number')    //вы получали из dom не тот элемент    
+        document.getElementById('number'),   
+        document.getElementById('gameTime'),
+        document.getElementById('playerNumtext'),
+        document.getElementById('playerInp'),   
+        document.getElementById('additionalTime'),
+        document.getElementById('timeToPlay')              
     );
     tikTakBoom.run();
 }

@@ -72,7 +72,7 @@ function createPlayers(numberOfPlayers, playerTime) {
             score: 0,
             timer: playerTime,
             errors: 0,
-            //0 - проиграл, 1 - выиграл, 2 - 
+            //0 - проиграл, 1 - выиграл, 2 - игра идёт
             state: 0,
 
             setTime(timeToSet) {
